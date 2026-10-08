@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>IRI Live Session</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+[hidden]{display:none!important}
+/* Layout: one narrow reading column; session card, short context, registration, numbered terms, agreement. */
+:root{
+  --bg:#F2F6F7; --surface:#FFFFFF; --ink:#10262E; --muted:#566C75; --line:#D2DDE1;
+  --accent:#0B6B6B; --accent-ink:#FFFFFF; --signal:#B86A00; --soft:#E4EFEF; --danger:#B3261E;
+  --display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C191E; --surface:#13252C; --ink:#E5EEF0; --muted:#93A8B0; --line:#27414B;
+  --accent:#55C6BF; --accent-ink:#06211F; --signal:#F0B04A; --soft:#1B343B; --danger:#FF8A80; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0C191E; --surface:#13252C; --ink:#E5EEF0; --muted:#93A8B0; --line:#27414B;
+  --accent:#55C6BF; --accent-ink:#06211F; --signal:#F0B04A; --soft:#1B343B; --danger:#FF8A80; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:680px;margin-inline:auto;display:flex;flex-direction:column;gap:28px}
+.brand{font-family:var(--mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);line-height:1.1;margin:8px 0 12px;text-wrap:balance}
+header p{margin:0;max-width:62ch;color:var(--muted)}
+.slot{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 20px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:16px 18px;margin-top:20px}
+.slot .day{grid-row:span 2;font-family:var(--display);font-weight:700;text-align:center;line-height:1;padding-right:20px;border-right:1px solid var(--line)}
+.slot .day small{display:block;font-family:var(--mono);font-weight:400;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.slot .day b{font-size:38px}
+.slot .time{font-weight:600;font-size:17px;font-variant-numeric:tabular-nums}
+.slot .sub{font-size:14px;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:18px;padding-top:24px;border-top:2px solid var(--ink)}
+section>h2{font-family:var(--display);font-size:23px;margin:0;line-height:1.2;text-wrap:balance}
+section p{margin:0;max-width:62ch}
+.q{display:flex;flex-direction:column;gap:8px;min-width:0}
+.q>label,.q>.lab{font-weight:600;font-size:15.5px}
+.q .hint{font-size:13.5px;color:var(--muted);margin-top:-4px}
+.req{color:var(--signal);font-weight:600}
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+textarea{min-height:80px;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible,.chip input:focus-visible+span,.check input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative;cursor:pointer}
+.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chip span{display:block;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:15px}
+.chip input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:500}
+.clauses{margin:0;padding:0;list-style:none;counter-reset:c;display:flex;flex-direction:column}
+.clauses li{counter-increment:c;display:grid;grid-template-columns:32px minmax(0,1fr);gap:8px;padding-block:12px;border-bottom:1px solid var(--line)}
+.clauses li::before{content:counter(c) ".";font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:2px}
+.clauses h3{margin:0 0 3px;font-size:15.5px;font-weight:600}
+.clauses p{font-size:15px}
+.ver{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.check{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;cursor:pointer}
+.check input{width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent)}
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+button{font:inherit;font-weight:600;border-radius:6px;padding:11px 20px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+button:disabled{opacity:.55;cursor:default}
+.msg{font-size:14.5px;margin:0}
+.msg.err{color:var(--danger)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.box h3{font-family:var(--display);font-size:19px;margin:0}
+pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:12.5px;line-height:1.5;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:12px;max-height:320px;overflow:auto}
+details{border-bottom:1px solid var(--line);padding-block:10px}
+summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+summary small{font-family:var(--mono);font-size:12px;color:var(--muted)}
+details pre{margin-top:10px}
+@media (max-width:420px){.slot{grid-template-columns:1fr}.slot .day{grid-row:auto;border-right:0;padding-right:0;text-align:left}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="brand">IRI · Inside Real Insights</div>
+    <h1>Join the IRI live session</h1>
+    <p>A video call to understand how you find and choose your customers. Register below and accept the confidentiality terms to confirm your seat.</p>
+    <div class="slot">
+      <div class="day"><small>Friday</small><b>9</b><small style="margin:4px 0 0">October</small></div>
+      <div class="time" id="slotTime"></div>
+      <div class="sub">Online · Zoom, Google Meet or WhatsApp · Free, no commitment</div>
+    </div>
+  </header>
+
+  <section>
+    <h2>About the project</h2>
+    <p>IRI is a tool in development. It helps sales teams spot companies that match their target, check and complete what is known about them, and decide which ones to contact first.</p>
+    <p>The project is at an early stage. Nothing will be sold during the session: we want to understand how you work before deciding what to build. No preparation is needed.</p>
+  </section>
+
+  <form id="form" novalidate>
+  <section>
+    <h2>Your registration</h2>
+    <div class="two">
+      <div class="q" data-q="nom"><label for="nom">Full name <span class="req">*</span></label><input type="text" id="nom" autocomplete="off"></div>
+      <div class="q" data-q="entreprise"><label for="entreprise">Company <span class="req">*</span></label><input type="text" id="entreprise" autocomplete="off"></div>
+    </div>
+    <div class="two">
+      <div class="q" data-q="role"><label for="role">Your role <span class="req">*</span></label><input type="text" id="role" autocomplete="off"></div>
+      <div class="q" data-q="contact"><label for="contact">Email or WhatsApp number <span class="req">*</span></label><div class="hint">The meeting link is sent here.</div><input type="text" id="contact" autocomplete="off"></div>
+    </div>
+    <div class="q" data-q="outil"><div class="lab" id="l_outil">Preferred platform <span class="req">*</span></div>
+      <div class="chips" role="group" aria-labelledby="l_outil" data-name="outil" data-type="radio" data-opts="Zoom|Google Meet|WhatsApp"></div></div>
+    <div class="q" data-q="sujet"><label for="sujet">Anything you would like us to cover?</label><textarea id="sujet"></textarea></div>
+  </section>
+
+  <section>
+    <h2>Confidentiality and terms</h2>
+    <p class="ver">Version 1.1 · 8 October 2026</p>
+    <ol class="clauses">
+      <li><div><h3>What you share</h3><p>What you share during the session stays confidential. IRI uses it only to design its product. It is never published, sold or passed on to anyone else.</p></div></li>
+      <li><div><h3>What we show</h3><p>Mock-ups, demos and plans shown during the session are confidential. Please do not share, copy or capture them, or use them for a competing project.</p></div></li>
+      <li><div><h3>Other participants</h3><p>If other people attend the same session, what they say is covered by the same confidentiality.</p></div></li>
+      <li><div><h3>Recording</h3><p>The session is recorded only if you agree below. Otherwise only written notes are taken. Any recording is deleted within 90 days.</p></div></li>
+      <li><div><h3>Anonymous summaries</h3><p>Your answers may be grouped with others in internal summaries, without your name or your company's. Nothing is quoted under your name without your written consent.</p></div></li>
+      <li><div><h3>Your own customers' data</h3><p>Please do not share personal data about your customers or business secrets you are not allowed to disclose. An anonymised example is always enough.</p></div></li>
+      <li><div><h3>Free participation</h3><p>Taking part creates no obligation to buy or partner. You can cancel or leave at any time, and ask us to delete your details and answers.</p></div></li>
+      <li><div><h3>Duration</h3><p>Terms 1 to 3 apply for two years from the session date. Information that is already public is not covered.</p></div></li>
+    </ol>
+    <div class="q" data-q="enreg"><div class="lab" id="l_enreg">May the session be recorded? <span class="req">*</span></div>
+      <div class="chips" role="group" aria-labelledby="l_enreg" data-name="enreg" data-type="radio" data-opts="Yes|Audio only|No"></div></div>
+    <div class="q" data-q="accord"><label class="check"><input type="checkbox" id="accord"><span>I have read the eight terms above and accept them. <span class="req">*</span></span></label></div>
+    <div class="q" data-q="signature"><label for="signature">Signature: type your full name <span class="req">*</span></label><div class="hint" id="today"></div><input type="text" id="signature" autocomplete="off"></div>
+  </section>
+  </form>
+
+  <div class="actions">
+    <button id="send" type="button">Confirm my seat</button>
+    <p id="status" class="msg" role="status"></p>
+  </div>
+
+  <div id="done" class="box" hidden>
+    <h3 id="doneTitle"></h3>
+    <p id="doneText" style="margin:0"></p>
+    <pre id="summary" hidden></pre>
+    <div class="actions"><button id="copy" type="button" hidden>Copy my registration</button><p id="copyMsg" class="msg" role="status"></p></div>
+  </div>
+
+</div>
+
+<script>
+// Session settings: edit these two lines to change the slot.
+const SLOT_TIME="3:00 pm to 3:45 pm, Douala time (UTC+1)";
+const SESSION="Friday 9 October 2026, "+SLOT_TIME;
+const VERSION="1.1 of 8 October 2026";
+// Supabase: paste your project URL and anon (public) key. Leave empty to use the copy-and-send fallback.
+const SUPABASE_URL="";
+const SUPABASE_ANON_KEY="";
+const TABLE="live_session_registrations";
+const KEY="iri-session-live-draft";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const F=[["nom","Full name",1],["entreprise","Company",1],["role","Role",1],["contact","Email or WhatsApp",1],["outil","Preferred platform",1],["sujet","Topic to cover",0],["enreg","Recording",1],["accord","Terms accepted",1],["signature","Signature",1]];
+
+$("slotTime").textContent=SLOT_TIME;
+document.querySelectorAll(".chips[data-name]").forEach(g=>{
+  const n=g.dataset.name,t=g.dataset.type;
+  g.innerHTML=g.dataset.opts.split("|").map((o,i)=>`<label class="chip"><input type="${t}" name="${n}" id="${n}_${i}" value="${esc(o)}"><span>${esc(o)}</span></label>`).join("");
+});
+$("today").textContent="Date: "+new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+
+function read(){
+  const f=$("form"),a={};
+  for(const [id] of F){
+    const group=f.querySelectorAll(`input[name=${id}]`);
+    if(group.length){ const c=[...group].find(x=>x.checked); if(c) a[id]=c.value; }
+    else if(id==="accord"){ if($("accord").checked) a.accord=true; }
+    else{ const v=$(id).value.trim(); if(v) a[id]=v; }
+  }
+  return a;
+}
+function fill(a){
+  const f=$("form");
+  for(const [k,v] of Object.entries(a||{})){
+    const group=f.querySelectorAll(`input[name=${k}]`);
+    if(group.length) group.forEach(c=>{c.checked=v===c.value});
+    else if(k!=="accord"&&k!=="signature"&&$(k)) $(k).value=v; // acceptance and signature are given fresh each time
+  }
+}
+function summaryText(a,when){
+  const out=["IRI LIVE SESSION — REGISTRATION","Session: "+SESSION,"Terms accepted: version "+VERSION,"Accepted at: "+when,""];
+  for(const [id,l] of F) if(a[id]!==undefined) out.push(l+": "+(a[id]===true?"yes":a[id]));
+  return out.join("\n");
+}
+async function copyText(text,msgEl,pre){
+  try{ await navigator.clipboard.writeText(text); msgEl.textContent="Copied."; }
+  catch(e){ const r=document.createRange(); r.selectNodeContents(pre); const s=getSelection(); s.removeAllRanges(); s.addRange(r); msgEl.textContent="Select the text, then copy it."; }
+}
+
+let last="",saveT;
+$("form").addEventListener("input",()=>{ clearTimeout(saveT); saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(read()))}catch(e){}},400); });
+$("copy").addEventListener("click",()=>copyText(last,$("copyMsg"),$("summary")));
+
+function uuid(){
+  if(crypto.randomUUID) return crypto.randomUUID();
+  const b=crypto.getRandomValues(new Uint8Array(16)); b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128;
+  const h=[...b].map(x=>x.toString(16).padStart(2,"0")).join("");
+  return h.slice(0,8)+"-"+h.slice(8,12)+"-"+h.slice(12,16)+"-"+h.slice(16,20)+"-"+h.slice(20);
+}
+async function saveRemote(id,a){
+  const row={id,session:SESSION,terms_version:VERSION,full_name:a.nom,company:a.entreprise,role:a.role,contact:a.contact,
+    platform:a.outil,topic:a.sujet||null,recording:a.enreg,terms_accepted:true,signature:a.signature};
+  const r=await fetch(SUPABASE_URL.replace(/\/$/,"")+"/rest/v1/"+TABLE,{method:"POST",
+    headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
+    body:JSON.stringify(row)});
+  if(!r.ok) throw new Error("HTTP "+r.status+" "+(await r.text()).slice(0,200));
+}
+function showFallback(a,note){
+  last=summaryText(a,new Date().toISOString());
+  $("doneTitle").textContent="Last step: send us your registration.";
+  $("doneText").textContent=(note?note+" ":"")+"Copy the text below and send it by email or WhatsApp to the person who invited you. Your seat is confirmed when they reply with the meeting link.";
+  $("summary").textContent=last; $("summary").hidden=false; $("copy").hidden=false;
+}
+$("send").addEventListener("click",async()=>{
+  const a=read(),st=$("status");
+  const miss=F.filter(([id,,req])=>req&&a[id]===undefined);
+  if(miss.length){
+    st.className="msg err";
+    st.textContent=miss.length===1?"Missing: "+miss[0][1]+".":miss.length+" required items are missing. First one: "+miss[0][1]+".";
+    document.querySelector(`[data-q="${miss[0][0]}"]`).scrollIntoView({block:"center"});
+    return;
+  }
+  const btn=$("send");
+  if(SUPABASE_URL&&SUPABASE_ANON_KEY){
+    btn.disabled=true; st.className="msg"; st.textContent="Sending…";
+    const id=uuid();
+    try{
+      await saveRemote(id,a);
+      st.textContent="";
+      $("doneTitle").textContent="Registration received.";
+      $("doneText").textContent="Thank you, "+a.nom+". You are registered for "+SESSION+" on "+a.outil+". Your reference is "+id.slice(0,8).toUpperCase()+". Your seat is confirmed when you receive the meeting link at "+a.contact+".";
+      $("summary").hidden=true; $("copy").hidden=true;
+      $("send").hidden=true;
+      try{localStorage.removeItem(KEY)}catch(e){}
+    }catch(e){
+      btn.disabled=false; st.textContent="";
+      showFallback(a,"We could not save your registration online.");
+    }
+  }else{
+    st.className="msg"; st.textContent="";
+    showFallback(a,"");
+  }
+  $("done").hidden=false;
+  $("done").scrollIntoView({block:"center"});
+});
+
+try{ fill(JSON.parse(localStorage.getItem(KEY)||"{}")); }catch(e){}
+
+</script>
+</body>
+</html>
