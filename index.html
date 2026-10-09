@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Session live IRI</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+ 
 <style>
 body{margin:0}
 [hidden]{display:none!important}
@@ -146,12 +147,12 @@ details pre{margin-top:10px}
 
 <script>
 // Réglages de la session : modifiez ces lignes pour changer le créneau.
+
 const SLOT_TIME="15 h 00 à 15 h 45, heure de Douala (UTC+1)";
 const SESSION="Vendredi 9 octobre 2026, "+SLOT_TIME;
 const VERSION="1.1 du 8 octobre 2026";
-// Supabase : collez l'URL du projet et la clé anon (publique). Laissez vide pour utiliser la copie à envoyer.
-const SUPABASE_URL="";
-const SUPABASE_ANON_KEY="";
+const SUPABASE_URL="https://bvgpnlbeyfiitnsitnqv.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2Z3BubGJleWZpaXRuc2l0bnF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MDMyNDQsImV4cCI6MjEwNzA3OTI0NH0._o0rk3E9wh3RrAslQvDTxkbTiqeVyyKPzOf0uXuM3ak";
 const TABLE="live_session_registrations";
 const KEY="iri-session-live-draft";
 const $=id=>document.getElementById(id);
