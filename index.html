@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Session live IRI</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
- 
 <style>
 body{margin:0}
 [hidden]{display:none!important}
@@ -83,7 +82,7 @@ details pre{margin-top:10px}
     <h1>Participer à la session live IRI</h1>
     <p>Un appel vidéo pour comprendre comment vous trouvez et choisissez vos clients. Inscrivez-vous ci-dessous et acceptez les conditions de confidentialité pour réserver votre place.</p>
     <div class="slot">
-      <div class="day"><small>Vendredi</small><b>9</b><small style="margin:4px 0 0">Octobre</small></div>
+      <div class="day"><small>Mercredi</small><b>14</b><small style="margin:4px 0 0">Octobre</small></div>
       <div class="time" id="slotTime"></div>
       <div class="sub">En ligne · Zoom, Google Meet ou WhatsApp · Gratuit, sans engagement</div>
     </div>
@@ -147,12 +146,12 @@ details pre{margin-top:10px}
 
 <script>
 // Réglages de la session : modifiez ces lignes pour changer le créneau.
-
 const SLOT_TIME="15 h 00 à 15 h 45, heure de Douala (UTC+1)";
-const SESSION="Vendredi 9 octobre 2026, "+SLOT_TIME;
+const SESSION="Mercredi 14 octobre 2026, "+SLOT_TIME;
 const VERSION="1.1 du 8 octobre 2026";
-const SUPABASE_URL="https://bvgpnlbeyfiitnsitnqv.supabase.co";
-const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2Z3BubGJleWZpaXRuc2l0bnF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MDMyNDQsImV4cCI6MjEwNzA3OTI0NH0._o0rk3E9wh3RrAslQvDTxkbTiqeVyyKPzOf0uXuM3ak";
+// Supabase : collez l'URL du projet et la clé anon (publique). Laissez vide pour utiliser la copie à envoyer.
+const SUPABASE_URL="";
+const SUPABASE_ANON_KEY="";
 const TABLE="live_session_registrations";
 const KEY="iri-session-live-draft";
 const $=id=>document.getElementById(id);
@@ -233,12 +232,10 @@ $("send").addEventListener("click",async()=>{
     const id=uuid();
     try{
       await saveRemote(id,a);
-      st.textContent="";
-      $("doneTitle").textContent="Inscription reçue.";
-      $("doneText").textContent="Merci, "+a.nom+". Vous êtes inscrit à la session du "+SESSION+", sur "+a.outil+". Votre référence : "+id.slice(0,8).toUpperCase()+". Votre place sera confirmée lorsque vous recevrez le lien de la réunion à l'adresse ou au numéro indiqué : "+a.contact+".";
-      $("summary").hidden=true; $("copy").hidden=true;
-      $("send").hidden=true;
-      try{localStorage.removeItem(KEY)}catch(e){}
+      try{ sessionStorage.setItem("iri-inscription",JSON.stringify({ref:id.slice(0,8).toUpperCase(),nom:a.nom,outil:a.outil,contact:a.contact,enreg:a.enreg})); }catch(e){}
+      try{ localStorage.removeItem(KEY); }catch(e){}
+      location.href="merci.html?ref="+encodeURIComponent(id.slice(0,8).toUpperCase());
+      return;
     }catch(e){
       btn.disabled=false; st.textContent="";
       showFallback(a,"Votre inscription n'a pas pu être enregistrée en ligne.");

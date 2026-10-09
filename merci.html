@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Inscription confirmée · Session live IRI</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+[hidden]{display:none!important}
+:root{
+  --bg:#F2F6F7; --surface:#FFFFFF; --ink:#10262E; --muted:#566C75; --line:#D2DDE1;
+  --accent:#0B6B6B; --accent-ink:#FFFFFF; --signal:#B86A00; --soft:#E4EFEF;
+  --display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root{
+  --bg:#0C191E; --surface:#13252C; --ink:#E5EEF0; --muted:#93A8B0; --line:#27414B;
+  --accent:#55C6BF; --accent-ink:#06211F; --signal:#F0B04A; --soft:#1B343B; color-scheme:dark } }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:40px 64px}
+.wrap{max-width:600px;margin-inline:auto;display:flex;flex-direction:column;gap:28px}
+.brand{font-family:var(--mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mark{width:56px;height:56px;border-radius:50%;background:var(--accent);display:grid;place-items:center}
+.mark svg{width:28px;height:28px}
+.mark path{fill:none;stroke:var(--accent-ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+.lead{margin:-12px 0 0;max-width:60ch;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:18px 20px;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:10px 20px}
+.card dt{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.card dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.ref{font-family:var(--mono);font-weight:500;letter-spacing:.06em}
+h2{font-family:var(--display);font-size:21px;margin:0}
+ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+ol li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:8px;padding-block:12px;border-bottom:1px solid var(--line)}
+ol li span{font-family:var(--mono);font-size:13px;color:var(--signal);padding-top:2px}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-block;font-weight:600;border-radius:6px;padding:11px 20px;text-decoration:none;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.note{font-size:14px;color:var(--muted);margin:0}
+@media (max-width:420px){.card{grid-template-columns:1fr;gap:2px}.card dd{margin-bottom:10px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="brand">IRI · Inside Real Insights</div>
+
+  <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+  <h1 id="title">Votre inscription est enregistrée</h1>
+  <p class="lead">Merci d'avoir pris le temps de remplir le formulaire. Votre accord sur les conditions de confidentialité a bien été enregistré.</p>
+
+  <dl class="card">
+    <dt>Session</dt><dd id="session"></dd>
+    <dt>Plateforme</dt><dd id="outil">Celle que vous avez choisie</dd>
+    <dt>Référence</dt><dd><span class="ref" id="ref">—</span></dd>
+  </dl>
+
+  <section style="display:flex;flex-direction:column;gap:14px">
+    <h2>La suite</h2>
+    <ol>
+      <li><span>1</span><div>Vous recevez le lien de la réunion <b id="contact">à l'adresse ou au numéro indiqué</b> avant la session. C'est ce message qui confirme votre place.</div></li>
+      <li><span>2</span><div>Le jour J, connectez-vous quelques minutes avant l'heure. Aucune préparation n'est nécessaire.</div></li>
+      <li><span>3</span><div>Un empêchement ? Répondez simplement au message d'invitation pour annuler ou décaler.</div></li>
+    </ol>
+  </section>
+
+  <div class="actions">
+    <a class="btn" id="gcal" href="#" target="_blank" rel="noopener">Ajouter à Google Agenda</a>
+    <a class="btn ghost" href="index.html">Revenir au formulaire</a>
+  </div>
+  <p class="note">Gardez votre référence : elle permet de retrouver votre inscription si vous nous écrivez.</p>
+</main>
+
+<script>
+// Réglages de la session : gardez-les identiques à ceux de index.html.
+const SESSION="Mercredi 14 octobre 2026, 15 h 00 à 15 h 45, heure de Douala (UTC+1)";
+const START_UTC="20261014T140000Z";   // début en heure UTC (15 h à Douala = 14 h UTC)
+const END_UTC="20261014T144500Z";     // fin en heure UTC
+const EVENT_TITLE="Session live IRI";
+
+const $=id=>document.getElementById(id);
+$("session").textContent=SESSION;
+
+let info={};
+try{ info=JSON.parse(sessionStorage.getItem("iri-inscription")||"{}"); }catch(e){}
+const ref=info.ref||new URLSearchParams(location.search).get("ref");
+if(ref) $("ref").textContent=String(ref).slice(0,12);
+if(info.outil) $("outil").textContent=info.outil;
+if(info.contact) $("contact").textContent="sur "+info.contact;
+if(info.nom){
+  const prenom=String(info.nom).trim().split(/\s+/)[0];
+  $("title").textContent="Merci "+prenom+", votre inscription est enregistrée";
+}
+
+const details="Session de découverte IRI."+(info.outil?" Plateforme : "+info.outil+".":"")+" Le lien de la réunion vous sera envoyé avant la session."+(ref?" Référence : "+ref+".":"");
+$("gcal").href="https://calendar.google.com/calendar/render?action=TEMPLATE"
+  +"&text="+encodeURIComponent(EVENT_TITLE)
+  +"&dates="+START_UTC+"/"+END_UTC
+  +"&details="+encodeURIComponent(details);
+</script>
+</body>
+</html>
